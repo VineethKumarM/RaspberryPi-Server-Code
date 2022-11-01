@@ -27,7 +27,7 @@ app.post('/signup', authController.userRegister);
 
 app.post('/signin', authController.userLogin);
 
-app.get('/dashboard', requireUserLogin, (req, res) => {
+app.get('/dashboard', (req, res) => {
 	res.render('dashboard');
 });
 

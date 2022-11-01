@@ -20,6 +20,7 @@ module.exports = (req, res, next) => {
         const {id} = payload;
         const user = users.filter(user => user.id == id);
         req.user = user;
+        // console.log(1)
         next();
     })
 }

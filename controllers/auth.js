@@ -54,6 +54,7 @@ const userLogin = async (req, res) => {
     let passCheck = await bycrpt.compare(password, user[0].password);
     if(passCheck){
         const token = jwt.sign({id:user[0].id}, key.JWT_KEY, {expiresIn: "3600000"});//expires in 1 hour = 3600000 ms
+        // console.log(token);
         res.json({
             success: "Successfully LoggedIn",
             token,
