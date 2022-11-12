@@ -3,7 +3,9 @@ const authController = require("./controllers/auth");
 const requireUserLogin = require("./middlewares/userRequireLogin");
 const app = express();
 const path = require('path');
+// const hueBridge = require("./controllers/hueBridge");
 
+// hueBridge.discoverAndCreateUser;
 
 app.use(express.urlencoded( { extended :true }));
 app.use(express.json());

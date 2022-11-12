@@ -1,4 +1,4 @@
-const bycrpt = require('bcryptjs');
+const bycrpt = require('bcryptjs');6
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const users = require("../users.json");
