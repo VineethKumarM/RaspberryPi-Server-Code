@@ -7,6 +7,7 @@
     "jsonwebtoken": "^8.5.1",
     "node-hue-api": "^5.0.0-beta.14",
     "passport": "^0.6.0",
+    "shortid": "^2.2.16",
     "uuid": "^9.0.0"
   }
 }

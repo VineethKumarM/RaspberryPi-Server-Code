@@ -1,4 +1,4 @@
-const users = require("../users.json");
+const students = require("../db/student.json");
 const jwt = require('jsonwebtoken');
 const key = require("../keys");
 
@@ -18,9 +18,8 @@ module.exports = (req, res, next) => {
             });
         }
         const {id} = payload;
-        const user = users.filter(user => user.id == id);
-        req.user = user;
-        // console.log(1)
+        const student = students.filter(user => user.id == id);
+        req.user = student;
         next();
     })
 }

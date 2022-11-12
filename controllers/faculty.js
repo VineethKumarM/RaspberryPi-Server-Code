@@ -1,24 +1,26 @@
 const bycrpt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
-const users = require("../faculty.json");
+const faculties = require("../db/faculty.json");
 const labs = require("../db/lab.json")
 const fs = require("fs");
 const key = require("../keys");
+const path = require('path');
+const uniqueId = require('shortid');
 
 const userRegister = async (req, res) => {
     const {name,phoneNumber,password} = req.body;
+    console.log(name, phoneNumber, password);
     let id = uuidv4(); 
-    console.log(name, phoneNumber, password, id);
     if(!name || !phoneNumber || !password){
         return res.status(422).json({
-            error: "Please fill all fields"
+            message: "Please fill all fields"
         })
     }
-    users.forEach(user => {
+    faculties.forEach(user => {
         if(user.phoneNumber == phoneNumber){
             return res.status(422).json({
-                error: "phone Number is already taken by someother user :("
+                message: "phone Number is already taken by someother user :("
             })
         }
     })
@@ -29,13 +31,14 @@ const userRegister = async (req, res) => {
         phoneNumber: phoneNumber,
         password: hashedPassword
     }
-    users.push(newUser);
-    fs.writeFile('users.json', JSON.stringify(users), (err) => {
+    console.log(newUser);
+    faculties.push(newUser);
+    fs.writeFile(path.join(__dirname, '../db/faculty.json'), JSON.stringify(faculties), (err) => {
         if (err) throw err;
-        console.log("New user added");
+        // console.log("New user added");
     });
     return res.status(200).json({
-        error: "Registered successfully :)"
+        message: "Registered successfully :)"
     })
 }
 
@@ -43,62 +46,60 @@ const userLogin = async (req, res) => {
     const {phoneNumber, password} = req.body;
     if(!phoneNumber || !password){
         return res.status(422).json({
-            error: "Incorrect Credentials!"
+            message: "Incorrect Credentials!"
         })
     }
-    const user = users.filter(user => user.phoneNumber == phoneNumber);
+    const user = faculties.filter(user => user.phoneNumber == phoneNumber);
     if(user.length == 0){
         return res.status(422).json({
-            error: "Incorrect Credentials :("
+            message: "Incorrect Credentials :("
         })
     }
     let passCheck = await bycrpt.compare(password, user[0].password);
     if(passCheck){
         const token = jwt.sign({id:user[0].id}, key.JWT_KEY, {expiresIn: "3600000"});//expires in 1 hour = 3600000 ms
         res.json({
-            success: "Successfully LoggedIn",
+            message: "Successfully LoggedIn",
             token,
             user: user[0]
         });
     }else{
         return res.status(422).json({
-            error: "Incorrect Credentials!"
+            message: "Incorrect Credentials!"
         })
     }
 }
 
+const myLabs = async(req, res) => {
+    const result = labs.filter(lab => lab.facultyId == req.user.id);
+    return res.json({
+        labs: result
+    });
+}
 
 const createLab = async(req,res) => {
-
-    const {labName} = req.body
-    var characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    var id = ""
-    var chaactersLength = characters.length;
-
-    for ( var i = 0; i < 5 ; i++ ) {
-        id += characters.charAt(Math.floor(Math.random() * chaactersLength));
-    }
-
+    const {labName} = req.body;
     const newLab = {
-        id : id,
+        id : uniqueId(),
         name: labName,
         facultyId: req.user.id,
         studentList : []
     }
-
-    labs.push(newLab)
-    fs.writeFile('../db/lab.json', JSON.stringify(users), (err) => {
+    labs.push(newLab);
+    fs.writeFile(path.join(__dirname, '../db/lab.json'), JSON.stringify(labs), (err) => {
         if (err) throw err;
         console.log("New lab created");
     });
 
     return res.status(200).json({
-        error: "Lab Created successfully :)"
+        lab: newLab.id,
+        message: "Lab Created successfully :)"
     })
 }
 
-
 module.exports = {
     userRegister,
-    userLogin
+    userLogin,
+    myLabs,
+    createLab
 };
