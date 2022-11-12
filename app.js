@@ -1,5 +1,5 @@
 const express  = require('express');
-const authController = require("./controllers/auth");
+const authController = require("./controllers/studentAuth");
 const requireUserLogin = require("./middlewares/userRequireLogin");
 const app = express();
 const path = require('path');
