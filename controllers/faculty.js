@@ -1,7 +1,8 @@
 const bycrpt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
-const users = require("../users.json");
+const users = require("../faculty.json");
+const labs = require("../db/lab.json")
 const fs = require("fs");
 const key = require("../keys");
 
@@ -54,7 +55,6 @@ const userLogin = async (req, res) => {
     let passCheck = await bycrpt.compare(password, user[0].password);
     if(passCheck){
         const token = jwt.sign({id:user[0].id}, key.JWT_KEY, {expiresIn: "3600000"});//expires in 1 hour = 3600000 ms
-        // console.log(token);
         res.json({
             success: "Successfully LoggedIn",
             token,
@@ -65,6 +65,36 @@ const userLogin = async (req, res) => {
             error: "Incorrect Credentials!"
         })
     }
+}
+
+
+const createLab = async(req,res) => {
+
+    const {labName} = req.body
+    var characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    var id = ""
+    var chaactersLength = characters.length;
+
+    for ( var i = 0; i < 5 ; i++ ) {
+        id += characters.charAt(Math.floor(Math.random() * chaactersLength));
+    }
+
+    const newLab = {
+        id : id,
+        name: labName,
+        facultyId: req.user.id,
+        studentList : []
+    }
+
+    labs.push(newLab)
+    fs.writeFile('../db/lab.json', JSON.stringify(users), (err) => {
+        if (err) throw err;
+        console.log("New lab created");
+    });
+
+    return res.status(200).json({
+        error: "Lab Created successfully :)"
+    })
 }
 
 
