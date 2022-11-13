@@ -31,7 +31,8 @@ const userRegister = async (req, res) => {
         name: name,
         phoneNumber: phoneNumber,
         password: hashedPassword,
-        notification: []
+        notification: [],
+        labs: []
     }
     console.log(newUser);
     students.push(newUser);
@@ -89,7 +90,11 @@ const joinLab = async(req, res) => {
     };
     faculties.forEach(faculty => {
         if(faculty.id == lab[0].facultyId){
-            faculty.notification.push(req.user.id);
+            const request = {
+                studentId: req.user.id,
+                labId: labId
+            }
+            faculty.notification.push(request);
         }
     });
     fs.writeFile(path.join(__dirname, '../db/faculty.json'), JSON.stringify(faculties), (err) => {

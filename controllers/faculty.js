@@ -2,6 +2,7 @@ const bycrpt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const faculties = require("../db/faculty.json");
+const students = require("../db/student.json");
 const labs = require("../db/lab.json")
 const fs = require("fs");
 const key = require("../keys");
@@ -98,9 +99,37 @@ const createLab = async(req,res) => {
     })
 }
 
+const acceptStudentJoinRequest = async (req, res) => {
+    const {studentId, labId} = req.body;    
+    const lab = labs.filter(lab => lab.id == labId);
+    console.log(lab);
+    lab[0].studentList.push(studentId);
+    fs.writeFile(path.join(__dirname, '../db/lab.json'), JSON.stringify(labs), (err) => {
+        if (err) throw err;
+        console.log("student added to lab");
+    });
+    students.forEach(student => {
+        if(student.id == studentId){
+            student.labs.push(labId);
+        }
+    })
+    fs.writeFile(path.join(__dirname, '../db/student.json'), JSON.stringify(students), (err) => {
+        if (err) throw err;
+        // console.log("New user added");
+    });
+    return res.status(200).json({
+        message: "student added successfully :)"
+    })
+}
+
+const rejectStudentJoinRequest = async (req, res) => {
+    
+}
+
 module.exports = {
     userRegister,
     userLogin,
     myLabs,
-    createLab
+    createLab,
+    acceptStudentJoinRequest
 };

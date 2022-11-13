@@ -7,5 +7,6 @@ router.post('/facultysignup', facultyController.userRegister);
 router.post('/facultysignin', facultyController.userLogin);
 router.get('/facultymylabs', facultyRequireLogin, facultyController.myLabs);
 router.post('/createLab', facultyRequireLogin, facultyController.createLab);
+router.post('/acceptstudentrequest', facultyRequireLogin, facultyController.acceptStudentJoinRequest);
 
 module.exports = router;
