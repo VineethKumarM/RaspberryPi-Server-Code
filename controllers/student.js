@@ -1,6 +1,7 @@
 const bycrpt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
+const students = require("../db/student.json");
 const faculties = require("../db/faculty.json");
 const labs = require("../db/lab.json")
 const fs = require("fs");
@@ -33,8 +34,8 @@ const userRegister = async (req, res) => {
         notification: []
     }
     console.log(newUser);
-    faculties.push(newUser);
-    fs.writeFile(path.join(__dirname, '../db/faculty.json'), JSON.stringify(faculties), (err) => {
+    students.push(newUser);
+    fs.writeFile(path.join(__dirname, '../db/student.json'), JSON.stringify(students), (err) => {
         if (err) throw err;
         // console.log("New user added");
     });
@@ -50,7 +51,7 @@ const userLogin = async (req, res) => {
             message: "Incorrect Credentials!"
         })
     }
-    const user = faculties.filter(user => user.phoneNumber == phoneNumber);
+    const user = students.filter(user => user.phoneNumber == phoneNumber);
     if(user.length == 0){
         return res.status(422).json({
             message: "Incorrect Credentials :("
@@ -78,29 +79,31 @@ const myLabs = async(req, res) => {
     });
 }
 
-const createLab = async(req,res) => {
-    const {labName} = req.body;
-    const newLab = {
-        id : uniqueId(),
-        name: labName,
-        facultyId: req.user.id,
-        studentList : []
-    }
-    labs.push(newLab);
-    fs.writeFile(path.join(__dirname, '../db/lab.json'), JSON.stringify(labs), (err) => {
-        if (err) throw err;
-        console.log("New lab created");
+const joinLab = async(req, res) => {
+    const {labId} = req.body;
+    const lab = labs.filter(lab => lab.id == labId);
+    if(lab.length == 0){
+        return res.status(422).json({
+            message: "No lab with given ID!"
+        })
+    };
+    faculties.forEach(faculty => {
+        if(faculty.id == lab[0].facultyId){
+            faculty.notification.push(req.user.id);
+        }
     });
-
+    fs.writeFile(path.join(__dirname, '../db/faculty.json'), JSON.stringify(faculties), (err) => {
+        if (err) throw err;
+        // console.log("New user added");
+    });
     return res.status(200).json({
-        lab: newLab.id,
-        message: "Lab Created successfully :)"
-    })
+        message: "Request sent successfully :)"
+    });
 }
 
 module.exports = {
     userRegister,
     userLogin,
     myLabs,
-    createLab
+    joinLab
 };

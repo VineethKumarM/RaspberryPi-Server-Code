@@ -10,6 +10,7 @@ const path = require('path');
 app.use(express.urlencoded( { extended :true }));
 app.use(express.json());
 app.use(require('./routes/faculty'));
+app.use(require('./routes/student'));
 
 // app.set('view engine', 'ejs');
 // app.set('views' , path.join(__dirname,'/views'));

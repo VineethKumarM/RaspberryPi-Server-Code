@@ -19,7 +19,7 @@ module.exports = (req, res, next) => {
         }
         const {id} = payload;
         const student = students.filter(user => user.id == id);
-        req.user = student;
+        req.user = student[0];
         next();
     })
 }
