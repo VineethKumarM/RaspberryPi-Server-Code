@@ -122,11 +122,20 @@ const showNotifications = async(req, res) => {
     });
 }
 
+const myNotification = async(req, res) => {
+    const student = students.forEach(student => {
+        if(student.id == req.user.id);
+    });
+    return res.status(200).json({
+        notification: student.notification
+    });
+}
 
 module.exports = {
     userRegister,
     userLogin,
     myLabs,
     joinLab,
-    showNotifications
+    showNotifications,
+    myNotification
 };

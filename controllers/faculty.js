@@ -153,8 +153,16 @@ const rejectStudentJoinRequest = async (req, res) => {
 
     return res.status(200).json({
         error: "student rejected :("
-    })
-    
+    })    
+}
+
+const myNotification = async(req, res) => {
+    const faculty = faculties.forEach(faculty => {
+        if(faculty.id == req.user.id);
+    });
+    return res.status(200).json({
+        notification: faculty.notification
+    });
 }
 
 module.exports = {
@@ -163,5 +171,6 @@ module.exports = {
     myLabs,
     createLab,
     acceptStudentJoinRequest,
-    rejectStudentJoinRequest
+    rejectStudentJoinRequest,
+    myNotification
 };
