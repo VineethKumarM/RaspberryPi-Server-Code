@@ -108,12 +108,20 @@ const acceptStudentJoinRequest = async (req, res) => {
         if (err) throw err;
         console.log("student added to lab");
     });
+
+    let newNotif = {
+        labId: labId,
+        message: "Your request has been rejected",
+        Accepted: true 
+    }
+
     students.forEach(student => {
         if(student.id == studentId){
             student.labs.push(labId);
-            student.notification.push(`${labId} has been approved by the faculty`)
+            student.notification.push(newNotif)
         }
     })
+
     fs.writeFile(path.join(__dirname, '../db/student.json'), JSON.stringify(students), (err) => {
         if (err) throw err;
         // console.log("New user added");
@@ -125,10 +133,17 @@ const acceptStudentJoinRequest = async (req, res) => {
 
 const rejectStudentJoinRequest = async (req, res) => {
     
-    const {studentId, labId} = req.body;    
+    const {studentId, labId} = req.body;  
+    
+    let newNotif = {
+        labId: labId,
+        message: "Your request has been rejected",
+        Accepted: false
+    }
+
     students.forEach(student => {
         if(student.id == studentId){
-            student.notification.push(`${labId} has been rejected by faculty`)
+            student.notification.push(newNotif)
         }
     })
 
