@@ -15,13 +15,13 @@ const userRegister = async (req, res) => {
     let id = uuidv4(); 
     if(!name || !phoneNumber || !password){
         return res.status(422).json({
-            message: "Please fill all fields"
+            error: "Please fill all fields"
         })
     }
     faculties.forEach(user => {
         if(user.phoneNumber == phoneNumber){
             return res.status(422).json({
-                message: "phone Number is already taken by someother user :("
+                error: "phone Number is already taken by someother user :("
             })
         }
     })
@@ -41,7 +41,7 @@ const userRegister = async (req, res) => {
         // console.log("New user added");
     });
     return res.status(200).json({
-        message: "Registered successfully :)"
+        success: "Registered successfully :)"
     })
 }
 
@@ -49,26 +49,26 @@ const userLogin = async (req, res) => {
     const {phoneNumber, password} = req.body;
     if(!phoneNumber || !password){
         return res.status(422).json({
-            message: "Incorrect Credentials!"
+            error: "Incorrect Credentials!"
         })
     }
     const user = students.filter(user => user.phoneNumber == phoneNumber);
     if(user.length == 0){
         return res.status(422).json({
-            message: "Incorrect Credentials :("
+            error: "Incorrect Credentials :("
         })
     }
     let passCheck = await bycrpt.compare(password, user[0].password);
     if(passCheck){
         const token = jwt.sign({id:user[0].id}, key.JWT_KEY, {expiresIn: "3600000"});//expires in 1 hour = 3600000 ms
         res.json({
-            message: "Successfully LoggedIn",
+            success: "Successfully LoggedIn",
             token,
             user: user[0]
         });
     }else{
         return res.status(422).json({
-            message: "Incorrect Credentials!"
+            error: "Incorrect Credentials!"
         })
     }
 }
@@ -85,7 +85,7 @@ const joinLab = async(req, res) => {
     const lab = labs.filter(lab => lab.id == labId);
     if(lab.length == 0){
         return res.status(422).json({
-            message: "No lab with given ID!"
+            error: "No lab with given ID!"
         })
     };
     faculties.forEach(faculty => {
@@ -102,7 +102,7 @@ const joinLab = async(req, res) => {
         // console.log("New user added");
     });
     return res.status(200).json({
-        message: "Request sent successfully :)"
+        error: "Request sent successfully :)"
     });
 }
 
