@@ -111,6 +111,7 @@ const acceptStudentJoinRequest = async (req, res) => {
     students.forEach(student => {
         if(student.id == studentId){
             student.labs.push(labId);
+            student.notification.push(`${labId} has been approved by the faculty`)
         }
     })
     fs.writeFile(path.join(__dirname, '../db/student.json'), JSON.stringify(students), (err) => {
@@ -124,6 +125,21 @@ const acceptStudentJoinRequest = async (req, res) => {
 
 const rejectStudentJoinRequest = async (req, res) => {
     
+    const {studentId, labId} = req.body;    
+    students.forEach(student => {
+        if(student.id == studentId){
+            student.notification.push(`${labId} has been rejected by faculty`)
+        }
+    })
+
+    fs.writeFile(path.join(__dirname, '../db/student.json'), JSON.stringify(students), (err) => {
+        if (err) throw err;
+    });
+
+    return res.status(200).json({
+        message: "student rejected :)"
+    })
+    
 }
 
 module.exports = {
@@ -131,5 +147,6 @@ module.exports = {
     userLogin,
     myLabs,
     createLab,
-    acceptStudentJoinRequest
+    acceptStudentJoinRequest,
+    rejectStudentJoinRequest
 };
