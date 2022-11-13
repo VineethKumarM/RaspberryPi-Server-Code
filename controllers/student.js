@@ -106,9 +106,27 @@ const joinLab = async(req, res) => {
     });
 }
 
+const showNotifications = async(req, res) => {
+    const {studentId} = req.user;
+    const student = students.filter(student => student.id == studentId);
+    
+    if(student.length == 0){
+        return res.status(422).json({
+            message: "No student with given ID!"
+        })
+    };
+
+    return res.status(200).json({
+        success: true,
+        data: student.notification
+    });
+}
+
+
 module.exports = {
     userRegister,
     userLogin,
     myLabs,
-    joinLab
+    joinLab,
+    showNotifications
 };
