@@ -131,5 +131,6 @@ module.exports = {
     userLogin,
     myLabs,
     createLab,
-    acceptStudentJoinRequest
+    acceptStudentJoinRequest,
+    rejectStudentJoinRequest
 };

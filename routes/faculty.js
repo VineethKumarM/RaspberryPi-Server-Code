@@ -8,5 +8,6 @@ router.post('/facultysignin', facultyController.userLogin);
 router.get('/facultymylabs', facultyRequireLogin, facultyController.myLabs);
 router.post('/createLab', facultyRequireLogin, facultyController.createLab);
 router.post('/acceptstudentrequest', facultyRequireLogin, facultyController.acceptStudentJoinRequest);
+router.post('/rejectstudentrequest', facultyRequireLogin, facultyController.rejectStudentJoinRequest);
 
 module.exports = router;
