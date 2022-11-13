@@ -9,6 +9,12 @@ const key = require("../keys");
 const path = require('path');
 const uniqueId = require('shortid');
 
+const allFaculties = async (req, res) => {
+    return res.status(200).json({
+        faculties: faculties
+    })
+}
+
 const userRegister = async (req, res) => {
     const {name,phoneNumber,password} = req.body;
     console.log(name, phoneNumber, password);
@@ -168,6 +174,7 @@ const myNotification = async(req, res) => {
 module.exports = {
     userRegister,
     userLogin,
+    allFaculties,
     myLabs,
     createLab,
     acceptStudentJoinRequest,
