@@ -80,16 +80,10 @@ const myLabs = async(req, res) => {
     });
 }
 
-const joinLab = async(req, res) => {
-    const {labId} = req.body;
-    const lab = labs.filter(lab => lab.id == labId);
-    if(lab.length == 0){
-        return res.status(422).json({
-            error: "No lab with given ID!"
-        })
-    };
+const joinFaculty = async(req, res) => {
+    const {facultyId} = req.body;
     faculties.forEach(faculty => {
-        if(faculty.id == lab[0].facultyId){
+        if(faculty.id == facultyId){
             const request = {
                 studentId: req.user.id,
                 labId: labId
@@ -135,7 +129,7 @@ module.exports = {
     userRegister,
     userLogin,
     myLabs,
-    joinLab,
+    joinFaculty,
     showNotifications,
     myNotification
 };
