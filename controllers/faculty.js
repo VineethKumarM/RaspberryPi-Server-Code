@@ -38,7 +38,7 @@ const userRegister = async (req, res) => {
         phoneNumber: phoneNumber,
         password: hashedPassword,
         notification: [],
-        labId,
+        labId: "",
     }
     faculties.push(newUser);
     fs.writeFile(path.join(__dirname, '../db/faculty.json'), JSON.stringify(faculties), (err) => {

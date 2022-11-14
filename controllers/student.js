@@ -83,9 +83,23 @@ const studentDetail = async (req ,res) => {
 }
 
 const myLabs = async(req, res) => {
-    let result = await labs.filter(lab => lab.id == req.user.labId);
+    let labDetail;
+    await labs.forEach(lab => {
+        if(lab.id == req.user.labId){
+            labDetail = lab
+        }
+    });
+    // console.log(labDetail);
+    let facultyName;
+    await faculties.forEach(faculty => {
+        if(faculty.id == labDetail.facultyId){
+            facultyName = faculty.name;
+        }
+    })
+    // console.log(facultyName);
     return res.json({
-        lab: result
+        lab: labDetail,
+        faculty: facultyName
     });
 }
 
