@@ -37,9 +37,9 @@ const userRegister = async (req, res) => {
         name: name,
         phoneNumber: phoneNumber,
         password: hashedPassword,
-        notification: []
+        notification: [],
+        labId,
     }
-    console.log(newUser);
     faculties.push(newUser);
     fs.writeFile(path.join(__dirname, '../db/faculty.json'), JSON.stringify(faculties), (err) => {
         if (err) throw err;
@@ -98,7 +98,15 @@ const createLab = async(req,res) => {
         if (err) throw err;
         console.log("New lab created");
     });
-
+    faculties.filter(faculty => {
+        if(faculty.id == req.user.id){
+            faculty.labId = newLab.id
+        }
+    })
+    fs.writeFile(path.join(__dirname, '../db/faculty.json'), JSON.stringify(faculties), (err) => {
+        if (err) throw err;
+        // console.log("New user added");
+    });
     return res.status(200).json({
         lab: newLab.id,
         success: "Lab Created successfully :)"
@@ -106,8 +114,13 @@ const createLab = async(req,res) => {
 }
 
 const acceptStudentJoinRequest = async (req, res) => {
-    const {studentId, labId} = req.body;    
-    const lab = labs.filter(lab => lab.id == labId);
+    const {studentId} = req.body;    
+    if(req.user.labId.length == 0){
+        return res.status(200).json({
+            success: "You do not have any lab :)"
+        })
+    }
+    const lab = labs.filter(lab => lab.id == req.user.labId);
     console.log(lab);
     lab[0].studentList.push(studentId);
     fs.writeFile(path.join(__dirname, '../db/lab.json'), JSON.stringify(labs), (err) => {
@@ -116,15 +129,15 @@ const acceptStudentJoinRequest = async (req, res) => {
     });
 
     let newNotif = {
-        labId: labId,
-        message: "Your request has been rejected",
+        message: "Your request has been accepted",
         Accepted: true 
     }
 
     students.forEach(student => {
         if(student.id == studentId){
-            student.labs.push(labId);
-            student.notification.push(newNotif)
+            student.labs = lab[0].id;
+            student.notification.push(newNotif);
+            student.labJoinStatus = 1;
         }
     })
 
@@ -139,10 +152,9 @@ const acceptStudentJoinRequest = async (req, res) => {
 
 const rejectStudentJoinRequest = async (req, res) => {
     
-    const {studentId, labId} = req.body;  
+    const {studentId} = req.body;  
     
     let newNotif = {
-        labId: labId,
         message: "Your request has been rejected",
         Accepted: false
     }
