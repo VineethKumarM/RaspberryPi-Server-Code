@@ -32,7 +32,7 @@ const userRegister = async (req, res) => {
         phoneNumber: phoneNumber,
         password: hashedPassword,
         notification: [],
-        labs,
+        labId: "",
         labJoinStatus: -1
     }
     console.log(newUser);
@@ -83,9 +83,9 @@ const studentDetail = async (req ,res) => {
 }
 
 const myLabs = async(req, res) => {
-    const result = labs.filter(lab => lab.facultyId == req.user.id);
+    let result = await labs.filter(lab => lab.id == req.user.labId);
     return res.json({
-        labs: result
+        lab: result
     });
 }
 

@@ -135,7 +135,7 @@ const acceptStudentJoinRequest = async (req, res) => {
 
     students.forEach(student => {
         if(student.id == studentId){
-            student.labs = lab[0].id;
+            student.labId = lab[0].id;
             student.notification.push(newNotif);
             student.labJoinStatus = 1;
         }
