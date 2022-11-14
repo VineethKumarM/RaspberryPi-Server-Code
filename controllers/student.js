@@ -32,7 +32,8 @@ const userRegister = async (req, res) => {
         phoneNumber: phoneNumber,
         password: hashedPassword,
         notification: [],
-        labs: []
+        labs,
+        labJoinStatus: -1
     }
     console.log(newUser);
     students.push(newUser);
@@ -73,6 +74,14 @@ const userLogin = async (req, res) => {
     }
 }
 
+const studentDetail = async (req ,res) => {
+    const {studentId} = req.body;
+    const student = students.filter(student => student.id == studentId);
+    return res.status(200).json({
+        studentDetails: student[0]
+    });
+}
+
 const myLabs = async(req, res) => {
     const result = labs.filter(lab => lab.facultyId == req.user.id);
     return res.json({
@@ -84,35 +93,30 @@ const joinFaculty = async(req, res) => {
     const {facultyId} = req.body;
     faculties.forEach(faculty => {
         if(faculty.id == facultyId){
-            const request = {
-                studentId: req.user.id,
-                labId: labId
-            }
-            faculty.notification.push(request);
+            // console.log(faculty);
+            faculty.notification.push({studentId: req.user.id});
         }
     });
+    console.log(faculties);
     fs.writeFile(path.join(__dirname, '../db/faculty.json'), JSON.stringify(faculties), (err) => {
         if (err) throw err;
         // console.log("New user added");
     });
-    return res.status(200).json({
-        error: "Request sent successfully :)"
+    let student;
+    students.forEach(stud => {
+        if(stud.id == req.user.id){
+            stud.labJoinStatus = 0;
+            student = stud;
+        }
+    })
+    fs.writeFile(path.join(__dirname, '../db/student.json'), JSON.stringify(students), (err) => {
+        if (err) throw err;
+        // console.log("New user added");
     });
-}
-
-const showNotifications = async(req, res) => {
-    const {studentId} = req.user;
-    const student = students.filter(student => student.id == studentId);
     
-    if(student.length == 0){
-        return res.status(422).json({
-            message: "No student with given ID!"
-        })
-    };
-
     return res.status(200).json({
-        success: true,
-        data: student.notification
+        success: "Request sent successfully :)",
+        user: student
     });
 }
 
@@ -128,8 +132,8 @@ const myNotification = async(req, res) => {
 module.exports = {
     userRegister,
     userLogin,
+    studentDetail,
     myLabs,
     joinFaculty,
-    showNotifications,
     myNotification
 };

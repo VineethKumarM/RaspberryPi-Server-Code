@@ -79,9 +79,9 @@ const userLogin = async (req, res) => {
 }
 
 const myLabs = async(req, res) => {
-    const result = labs.filter(lab => lab.facultyId == req.user.id);
+    const result = labs.filter(lab => lab.id == req.user.labId);
     return res.json({
-        labs: result
+        labs: result[0]
     });
 }
 
@@ -120,7 +120,7 @@ const acceptStudentJoinRequest = async (req, res) => {
             success: "You do not have any lab :)"
         })
     }
-    const lab = labs.filter(lab => lab.id == req.user.labId);
+    let lab = labs.filter(lab => lab.id == req.user.labId);
     console.log(lab);
     lab[0].studentList.push(studentId);
     fs.writeFile(path.join(__dirname, '../db/lab.json'), JSON.stringify(labs), (err) => {
@@ -161,7 +161,8 @@ const rejectStudentJoinRequest = async (req, res) => {
 
     students.forEach(student => {
         if(student.id == studentId){
-            student.notification.push(newNotif)
+            student.notification.push(newNotif);            
+            student.labJoinStatus = -1;
         }
     })
 
@@ -170,7 +171,7 @@ const rejectStudentJoinRequest = async (req, res) => {
     });
 
     return res.status(200).json({
-        error: "student rejected :("
+        success: "student rejected :("
     })    
 }
 
