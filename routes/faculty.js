@@ -10,5 +10,5 @@ router.post('/createLab', facultyRequireLogin, facultyController.createLab);
 router.post('/acceptstudentrequest', facultyRequireLogin, facultyController.acceptStudentJoinRequest);
 router.post('/rejectstudentrequest',facultyRequireLogin,facultyController.rejectStudentJoinRequest);
 router.post('/mynotification',facultyRequireLogin,facultyController.myNotification);
-
+router.get('/allfaculties',facultyController.allFaculties);
 module.exports = router;
