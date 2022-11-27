@@ -3,14 +3,17 @@ const express  = require('express');
 // const requireUserLogin = require("./middlewares/facultyRequireLogin");
 const app = express();
 const path = require('path');
-// const hueBridge = require("./controllers/hueBridge");
+const hueBridge = require("./controllers/hueBridge");
+const { JWT_KEY } = require('./keys');
 
-// hueBridge.discoverAndCreateUser;
+// hueBridge.discoverAndCreateUser()
+
 
 app.use(express.urlencoded( { extended :true }));
 app.use(express.json());
 app.use(require('./routes/faculty'));
 app.use(require('./routes/student'));
+
 
 app.listen( 5000, ()=> {
 	console.log("Smart Lab is accessible from port 5000!!!!");
