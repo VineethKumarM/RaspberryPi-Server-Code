@@ -1,1 +1,1 @@
-[{"id":"5e73c9ac-53b7-423f-9179-d2c01b77f2e5","name":"teacher-1","phoneNumber":"9876543210","password":"$2a$10$Xz2HXxwHrhykwBAiMlA5DOrqXBP9u5vmEMKf12rWch8Uo6oKIo4JG","notification":[{"studentId":"480dc6a8-6fd1-455f-b1c9-ab8244cab979"}],"labId":"a99spr6Ni"}]
+[{"id":"49266206-641b-4a2d-a715-3331cfa95b80","name":"123","phoneNumber":"123","password":"$2a$10$7EYMYziu2dVQ6iIouRUC3OTQXQBtNGyXyCIPxe.AJ1qsb.ArJ0gx6","notification":[],"labId":"","jwt_token":"secret6"}]

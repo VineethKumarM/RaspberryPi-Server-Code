@@ -10,16 +10,16 @@ const path = require('path');
 const uniqueId = require('shortid');
 
 const userRegister = async (req, res) => {
-    const {name,phoneNumber,password} = req.body;
-    console.log(name, phoneNumber, password);
+    const {rollNumber,password} = req.body;
+    console.log(rollNumber, password);
     let id = uuidv4(); 
-    if(!name || !phoneNumber || !password){
+    if(!rollNumber || !password){
         return res.status(422).json({
             error: "Please fill all fields"
         })
     }
     faculties.forEach(user => {
-        if(user.phoneNumber == phoneNumber){
+        if(user.rollNumber == rollNumber){
             return res.status(422).json({
                 error: "phone Number is already taken by someother user :("
             })
@@ -28,12 +28,12 @@ const userRegister = async (req, res) => {
     let hashedPassword = await bycrpt.hash(password,10);
     let newUser = {
         id: id,
-        name: name,
-        phoneNumber: phoneNumber,
+        rollNumber: rollNumber,
         password: hashedPassword,
         notification: [],
         labId: "",
-        labJoinStatus: -1
+        labJoinStatus: -1,
+        jwt_token: JWT_KEY[Math.floor(Math.random() * JWT_KEY.length)]
     }
     console.log(newUser);
     students.push(newUser);
@@ -47,13 +47,13 @@ const userRegister = async (req, res) => {
 }
 
 const userLogin = async (req, res) => {
-    const {phoneNumber, password} = req.body;
-    if(!phoneNumber || !password){
+    const {rollNumber, password} = req.body;
+    if(!rollNumber || !password){
         return res.status(422).json({
             error: "Incorrect Credentials!"
         })
     }
-    const user = students.filter(user => user.phoneNumber == phoneNumber);
+    const user = students.filter(user => user.rollNumber == rollNumber);
     if(user.length == 0){
         return res.status(422).json({
             error: "Incorrect Credentials :("
@@ -61,7 +61,7 @@ const userLogin = async (req, res) => {
     }
     let passCheck = await bycrpt.compare(password, user[0].password);
     if(passCheck){
-        const token = jwt.sign({id:user[0].id}, key.JWT_KEY, {expiresIn: "3600000"});//expires in 1 hour = 3600000 ms
+        const token = jwt.sign({id:user[0].id}, user[0].jwt_token, {expiresIn: "3600000"});//expires in 1 hour = 3600000 ms
         res.json({
             success: "Successfully LoggedIn",
             token,

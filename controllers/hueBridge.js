@@ -20,7 +20,7 @@ const deviceName = 'example-code';
 // }
 
 const discoverAndCreateUser = async () => {
-  const ipAddress =  "192.168.0.100";
+  const ipAddress =  "192.168.1.103";
 
   // Create an unauthenticated instance of the Hue API so that we can create a new user
   const unauthenticatedApi = await hueApi.createLocal(ipAddress).connect();
@@ -56,11 +56,11 @@ const discoverAndCreateUser = async () => {
     console.log(`Connected to Hue Bridge: ${bridgeConfig.name} :: ${bridgeConfig.ipaddress}`);
 
   } catch(err) {
-    if (err.getHueErrorType() === 101) {
-      console.error('The Link button on the bridge was not pressed. Please press the Link button and try again.');
-    } else {
+    // if (err.getHueErrorType() === 101) {
+    //   console.error('The Link button on the bridge was not pressed. Please press the Link button and try again.');
+    // } else {
       console.error(`Unexpected Error: ${err.message}`);
-    }
+    // }
   }
 }
 
