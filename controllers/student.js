@@ -74,7 +74,7 @@ const userLogin = async (req, res) => {
         }
     });
     // const user = students.filter(user => user.rollNumber == rollNumber);
-    if(!user{
+    if(!user){
         return res.status(422).json({
             error: "Incorrect Credentials :("
         })
@@ -109,7 +109,7 @@ const studentDetail = async (req ,res) => {
         }
     });
     return res.status(200).json({
-        studentDetails: student[
+        studentDetails: student
     });
 }
 
@@ -132,13 +132,6 @@ const myLabs = async(req, res) => {
             facultyName = decryptedData.name;
         }
     });
-    l// et facultyName;
-    a// wait faculties.forEach(faculty => {
-     //    if(faculty.id == labDetail.facultyId){
-     //        facultyName = faculty.name;
-     //    }
-    }// )
-    // console.log(facultyName);
     return res.json({
         lab: labDetail,
         faculty: facultyName
@@ -158,13 +151,6 @@ const joinFaculty = async(req, res) => {
             cipher.ciphertext = CryptoJS.AES.encrypt(JSON.stringify(decryptedData), 'secret key 123').toString();
         }
     });
-    f// aculties.forEach(faculty => {
-     //    if(faculty.id == facultyId){
-     //        // console.log(faculty);
-     //        faculty.notification.push({studentId: req.user.id});
-     //    }
-    }// );
-    c// onsole.log(faculties);
     fs.writeFile(path.join(__dirname, '../db/faculty.json'), JSON.stringify(faculties), (err) => {
         if (err) throw err;
         // console.log("New user added");
@@ -182,12 +168,6 @@ const joinFaculty = async(req, res) => {
             cipher.ciphertext = CryptoJS.AES.encrypt(JSON.stringify(decryptedData), 'secret key 123').toString();
         }
     });
-    s// tudents.forEach(stud => {
-     //    if(stud.id == req.user.id){
-     //        stud.labJoinStatus = 0;
-     //        student = stud;
-     //    }
-    }// )
     fs.writeFile(path.join(__dirname, '../db/student.json'), JSON.stringify(students), (err) => {
         if (err) throw err;
         // console.log("New user added");
@@ -211,9 +191,6 @@ const myNotification = async(req, res) => {
             student = decryptedData;
         }
     });
-    c// onst student = students.forEach(student => {
-     //    if(student.id == req.user.id);
-    }// );
     return res.status(200).json({
         notification: student.notification
     });
