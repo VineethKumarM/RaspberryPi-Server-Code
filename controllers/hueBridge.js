@@ -14,6 +14,8 @@ let createdUser, authenticatedApi;
 const ipAddress =  "192.168.137.7";
 const discoverAndCreateUser = async () => {
 
+  const ipAddress =  "192.168.1.103";
+
   const unauthenticatedApi = await hueApi.createLocal(ipAddress).connect();
   
   try {
@@ -33,8 +35,11 @@ const discoverAndCreateUser = async () => {
 
   } catch(err) {
 
+    // if (err.getHueErrorType() === 101) {
+    //   console.error('The Link button on the bridge was not pressed. Please press the Link button and try again.');
+    // } else {
       console.error(`Unexpected Error: ${err.message}`);
-
+    // }
   }
 }
 

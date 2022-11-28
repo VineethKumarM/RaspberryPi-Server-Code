@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 [{"id":"480dc6a8-6fd1-455f-b1c9-ab8244cab979","name":"student-1","phoneNumber":"1234567890","password":"$2a$10$l0YS2JfoXin3ERGB34hxcO65A8qI2aVZKbazdGkCJo68uxq26qJh2","notification":[{"message":"Your request has been accepted","Accepted":true},{"message":"Your request has been accepted","Accepted":true},{"message":"Your request has been accepted","Accepted":true},{"message":"Your request has been accepted","Accepted":true},{"message":"Your request has been accepted","Accepted":true}],"labId":"a99spr6Ni","labJoinStatus":1},{"id":"687a8b6a-1667-425f-bc22-9b0353d02512","name":"VineethKumar","phoneNumber":"123456","password":"$2a$10$4S3fmNf70flOG1f/lIAhf.XBRGOFinXBtUpDOv.tJJinooZJ9G.j6","notification":[{"message":"Your request has been accepted","Accepted":true},{"message":"Your request has been accepted","Accepted":true}],"labId":"a99spr6Ni","labJoinStatus":1}]
+=======
+[]
+>>>>>>> e5d0b2f6e7a2e6805ff2beb2cd17829939448ded

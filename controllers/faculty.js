@@ -8,6 +8,7 @@ const fs = require("fs");
 const key = require("../keys");
 const path = require('path');
 const uniqueId = require('shortid');
+const { JWT_KEY } = require('../keys');
 
 const allFaculties = async (req, res) => {
     return res.status(200).json({
@@ -38,7 +39,8 @@ const userRegister = async (req, res) => {
         phoneNumber: phoneNumber,
         password: hashedPassword,
         notification: [],
-        labId,
+        labId: "",
+        jwt_token: JWT_KEY[Math.floor(Math.random() * JWT_KEY.length)]
     }
     faculties.push(newUser);
     fs.writeFile(path.join(__dirname, '../db/faculty.json'), JSON.stringify(faculties), (err) => {
@@ -66,7 +68,7 @@ const userLogin = async (req, res) => {
     }
     let passCheck = await bycrpt.compare(password, user[0].password);
     if(passCheck){
-        const token = jwt.sign({id:user[0].id}, key.JWT_KEY, {expiresIn: "3600000"});//expires in 1 hour = 3600000 ms
+        const token = jwt.sign({id:user[0].id}, user[0].jwt_token, {expiresIn: "3600000"});//expires in 1 hour = 3600000 ms
         res.json({
             success: "Successfully LoggedIn",
             token,

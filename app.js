@@ -5,7 +5,10 @@ const app = express();
 const path = require('path');
 const hueBridge = require("./controllers/hueBridge");
 
+
 // hueBridge.discoverAndCreateUser();
+
+const { JWT_KEY } = require('./keys');
 
 app.use(express.urlencoded( { extended :true }));
 app.use(express.json());
