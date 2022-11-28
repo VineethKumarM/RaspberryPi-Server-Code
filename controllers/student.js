@@ -5,10 +5,11 @@ const students = require("../db/student.json");
 const faculties = require("../db/faculty.json");
 const labs = require("../db/lab.json");
 const fs = require("fs");
-const key = require("../keys");
 const path = require('path');
 const uniqueId = require('shortid');
 
+const { JWT_KEY } = require('../keys');
+const keys = require('../keys');
 const userRegister = async (req, res) => {
     const {rollNumber,password} = req.body;
     console.log(rollNumber, password);
@@ -33,7 +34,7 @@ const userRegister = async (req, res) => {
         notification: [],
         labId: "",
         labJoinStatus: -1,
-        jwt_token: JWT_KEY[Math.floor(Math.random() * JWT_KEY.length)]
+        jwt_token: keys.JWT_KEY
     }
     console.log(newUser);
     students.push(newUser);
@@ -61,7 +62,7 @@ const userLogin = async (req, res) => {
     }
     let passCheck = await bycrpt.compare(password, user[0].password);
     if(passCheck){
-        const token = jwt.sign({id:user[0].id}, user[0].jwt_token, {expiresIn: "3600000"});//expires in 1 hour = 3600000 ms
+        const token = jwt.sign({id:user[0].id},keys.JWT_KEY, {expiresIn: "3600000"});//expires in 1 hour = 3600000 ms
         res.json({
             success: "Successfully LoggedIn",
             token,

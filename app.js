@@ -6,7 +6,7 @@ const path = require('path');
 const hueBridge = require("./controllers/hueBridge");
 
 
-// hueBridge.discoverAndCreateUser();
+hueBridge.discoverAndCreateUser();
 
 const { JWT_KEY } = require('./keys');
 

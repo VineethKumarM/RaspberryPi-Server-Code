@@ -11,10 +11,10 @@ const LIGHT_ID = 1;
 
 let createdUser, authenticatedApi;
 
-const ipAddress =  "192.168.137.7";
+const ipAddress =  "192.168.137.240";
 const discoverAndCreateUser = async () => {
 
-  const ipAddress =  "192.168.1.103";
+//   const ipAddress =  "192.168.1.103";
 
   const unauthenticatedApi = await hueApi.createLocal(ipAddress).connect();
   
@@ -70,18 +70,18 @@ const lightList = async (req, res) => {
 }
 
 const lightOn = async (req, res) => {
-  console.log(req.body);
+  console.log("on re", req.body);
   const {id} = req.body;
   if(!id) {
     return res.status(200).json({
       err: "no id"
     })
   }
-  // await hueApi.createLocal(ipAddress).connect(createdUser.username).
-  // then(api => {
-  //   const On = new LightState().on();
-  //   api.lights.setLightState(id, On);
-  // })
+  await hueApi.createLocal(ipAddress).connect(createdUser.username).
+  then(api => {
+    const On = new LightState().on().ct(190).bri(80);
+    api.lights.setLightState(id, On);
+  })
   return res.status(200).json({
     success: "light turned on",
   })
@@ -95,11 +95,11 @@ const lightOff = async (req, res) => {
       err: "no id"
     })
   }
-  // await hueApi.createLocal(ipAddress).connect(createdUser.username).
-  // then(api => {
-  //   const Off = new LightState().off();
-  //   api.lights.setLightState(id, Off);
-  // })
+  await hueApi.createLocal(ipAddress).connect(createdUser.username).
+  then(api => {
+    const Off = new LightState().off();
+    api.lights.setLightState(id, Off);
+  })
   return res.status(200).json({
     success: "light turned off",
   })
@@ -113,12 +113,11 @@ const lightconfig = async (req, res) => {
       error: "insufficient configuration details"
     })
   }
-//   else 
-//   await hueApi.createLocal(ipAddress).connect(createdUser.username).
-//   then(api => {
-//     const state = new LightState().brightness(bri).ct(ct);
-//     api.lights.setLightState(id, state);
-//   })
+  await hueApi.createLocal(ipAddress).connect(createdUser.username).
+  then(api => {
+    const state = new LightState().on().brightness(bri).ct(ct);
+    api.lights.setLightState(id, state);
+  })
   return res.status(200).json({
     success: "light adjusted",
   })
