@@ -27,8 +27,11 @@ const userRegister = async (req, res) => {
             error: "Please fill all fields"
         })
     }
-    faculties.forEach(user => {
-        if(user.phoneNumber == phoneNumber){
+    faculties.forEach(cipher => {
+        var bytes  = CryptoJS.AES.decrypt(cipher.ciphertext, 'secret key 123');
+        var decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+        // console.log(decryptedData);
+        if(decryptedData.phoneNumber == phoneNumber){
             return res.status(422).json({
                 error: "phone Number is already taken by someother user :("
             })
@@ -79,7 +82,7 @@ const userLogin = async (req, res) => {
             user = decryptedData;
         }
     });
-    console.log(user);
+    // console.log(user);
     if(!user){
         return res.status(422).json({
             error: "Incorrect Credentials :("
