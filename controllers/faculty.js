@@ -3,12 +3,14 @@ const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const faculties = require("../db/faculty.json");
 const students = require("../db/student.json");
-const labs = require("../db/lab.json")
+const labs = require("../db/lab.json");
 const fs = require("fs");
 const path = require('path');
 const uniqueId = require('shortid');
 const { JWT_KEY } = require('../keys');
 const keys = require('../keys');
+var CryptoJS = require("crypto-js");
+
 
 const allFaculties = async (req, res) => {
     return res.status(200).json({
@@ -42,7 +44,14 @@ const userRegister = async (req, res) => {
         labId: "",
         jwt_token: keys.JWT_KEY
     }
-    faculties.push(newUser);
+    
+
+    // Encrypt
+    var ciphertext = CryptoJS.AES.encrypt(JSON.stringify(newUser), 'secret key 123').toString();
+
+
+    // console.log(decryptedData); // [{id: 1}, {id: 2}]
+    faculties.push({ciphertext});
     fs.writeFile(path.join(__dirname, '../db/faculty.json'), JSON.stringify(faculties), (err) => {
         if (err) throw err;
         // console.log("New user added");
@@ -60,19 +69,29 @@ const userLogin = async (req, res) => {
             error: "Incorrect Credentials!"
         })
     }
-    const user = faculties.filter(user => user.phoneNumber == phoneNumber);
-    if(user.length == 0){
+    let user;
+    faculties.forEach(cipher => {
+        // Decrypt
+        var bytes  = CryptoJS.AES.decrypt(cipher.ciphertext, 'secret key 123');
+        var decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+        console.log(decryptedData);
+        if(decryptedData.phoneNumber == phoneNumber){
+            user = decryptedData;
+        }
+    });
+    console.log(user);
+    if(!user){
         return res.status(422).json({
             error: "Incorrect Credentials :("
         })
     }
-    let passCheck = await bycrpt.compare(password, user[0].password);
+    let passCheck = await bycrpt.compare(password, user.password);
     if(passCheck){
-        const token = jwt.sign({id:user[0].id}, keys.JWT_KEY, {expiresIn: "3600000"});//expires in 1 hour = 3600000 ms
+        const token = jwt.sign({id:user.id}, keys.JWT_KEY, {expiresIn: "3600000"});//expires in 1 hour = 3600000 ms
         res.json({
             success: "Successfully LoggedIn",
             token,
-            user: user[0]
+            user: user
         });
     }else{
         return res.status(422).json({
@@ -96,16 +115,26 @@ const createLab = async(req,res) => {
         facultyId: req.user.id,
         studentList : []
     }
-    labs.push(newLab);
+    labs.push(newLab);   
     fs.writeFile(path.join(__dirname, '../db/lab.json'), JSON.stringify(labs), (err) => {
         if (err) throw err;
         console.log("New lab created");
     });
-    faculties.filter(faculty => {
-        if(faculty.id == req.user.id){
-            faculty.labId = newLab.id
+    // faculties.filter(faculty => {
+    //     if(faculty.id == req.user.id){
+    //         faculty.labId = newLab.id
+    //     }
+    // })
+    faculties.forEach(cipher => {
+        // Decrypt
+        var bytes  = CryptoJS.AES.decrypt(cipher.ciphertext, 'secret key 123');
+        var decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+        if(decryptedData.id == req.user.id){
+            decryptedData.labId = newLab.id            
+            // Encrypt
+            cipher.ciphertext = CryptoJS.AES.encrypt(JSON.stringify(decryptedData), 'secret key 123').toString();
         }
-    })
+    });
     fs.writeFile(path.join(__dirname, '../db/faculty.json'), JSON.stringify(faculties), (err) => {
         if (err) throw err;
         // console.log("New user added");
@@ -182,9 +211,17 @@ const rejectStudentJoinRequest = async (req, res) => {
 }
 
 const myNotification = async(req, res) => {
-    const faculty = faculties.forEach(faculty => {
-        if(faculty.id == req.user.id);
+    const faculty = faculties.forEach(cipher => {
+        // Decrypt
+        var bytes  = CryptoJS.AES.decrypt(cipher.ciphertext, 'secret key 123');
+        var decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+        if(decryptedData.id == req.user.id){
+            return decryptedData;
+        }
     });
+    // const faculty = faculties.forEach(faculty => {
+    //     if(faculty.id == req.user.id);
+    // });
     return res.status(200).json({
         notification: faculty.notification
     });

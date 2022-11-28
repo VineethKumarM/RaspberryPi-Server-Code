@@ -3,10 +3,10 @@ const express  = require('express');
 // const requireUserLogin = require("./middlewares/facultyRequireLogin");
 const app = express();
 const path = require('path');
-const hueBridge = require("./controllers/hueBridge");
+// const hueBridge = require("./controllers/hueBridge");
 
 
-hueBridge.discoverAndCreateUser();
+// hueBridge.discoverAndCreateUser();
 
 const { JWT_KEY } = require('./keys');
 

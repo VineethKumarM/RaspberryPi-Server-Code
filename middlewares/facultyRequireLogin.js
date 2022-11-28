@@ -1,6 +1,7 @@
 const faculties = require("../db/faculty.json");
 const jwt = require('jsonwebtoken');
 const key = require("../keys");
+var CryptoJS = require("crypto-js");
 
 
 module.exports = (req, res, next) => {
@@ -18,8 +19,17 @@ module.exports = (req, res, next) => {
             });
         }
         const {id} = payload;
-        const faculty = faculties.filter(user => user.id == id);
-        req.user = faculty[0];
+        // const faculty = faculties.filter(user => user.id == id);
+        let user;
+        faculties.forEach(cipher => {
+            // Decrypt
+            var bytes  = CryptoJS.AES.decrypt(cipher.ciphertext, 'secret key 123');
+            var decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+            if(decryptedData.id == id){
+                user = decryptedData;
+            }
+        });
+        req.user = user;
         next();
     })
 }
