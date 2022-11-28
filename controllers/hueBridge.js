@@ -7,25 +7,15 @@ const LightState = v3.lightStates.LightState;
 const appName = 'node-hue-api';
 const deviceName = 'example-code';
 
-// async function discoverBridge() {
-//   const discoveryResults = await discovery.nupnpSearch();
+const LIGHT_ID = 1;
 
-//   if (discoveryResults.length === 0) {
-//     console.error('Failed to resolve any Hue Bridges');
-//     return null;
-//   } else {
-//     // Ignoring that you could have more than one Hue Bridge on a network as this is unlikely in 99.9% of users situations
-//     return discoveryResults[0].ipaddress;
-//   }
-// }
+let createdUser, authenticatedApi;
 
+const ipAddress =  "192.168.137.7";
 const discoverAndCreateUser = async () => {
-  const ipAddress =  "192.168.0.100";
 
-  // Create an unauthenticated instance of the Hue API so that we can create a new user
   const unauthenticatedApi = await hueApi.createLocal(ipAddress).connect();
   
-  let createdUser;
   try {
     createdUser = await unauthenticatedApi.users.createUser(appName, deviceName);
     console.log('*******************************************************************************\n');
@@ -36,35 +26,103 @@ const discoverAndCreateUser = async () => {
     console.log(`Hue Bridge User Client Key: ${createdUser.clientkey}`);
     console.log('*******************************************************************************\n');
 
-    // Create a new API instance that is authenticated with the new user we created
-    const authenticatedApi = await hueApi.createLocal(ipAddress).connect(createdUser.username).then(api => {
-      // Using a LightState object to build the desired state
-      const state = new LightState()
-        .on()
-        .ct(200)
-        .brightness(100)
-      ;      
-      return api.lights.setLightState(LIGHT_ID, state);
-    })
-    .then(result => {
-      console.log(`Light state change was successful? ${result}`);
-    })
-  ;
 
-    // Do something with the authenticated user/api
-    const bridgeConfig = await authenticatedApi.configuration.getConfiguration();
-    console.log(`Connected to Hue Bridge: ${bridgeConfig.name} :: ${bridgeConfig.ipaddress}`);
+    
+    // console.log(authenticatedApi);
+
 
   } catch(err) {
-    if (err.getHueErrorType() === 101) {
-      console.error('The Link button on the bridge was not pressed. Please press the Link button and try again.');
-    } else {
+
       console.error(`Unexpected Error: ${err.message}`);
-    }
+
   }
 }
 
-// Invoke the discovery and create user code
+const lightList = async (req, res) => {
+    // console.log(authenticatedApi);
+    await hueApi.createLocal(ipAddress).connect(createdUser.username).then(api => {
+      api.lights.getAll()
+      .then(allLights => {
+        // Display the lights from the bridge
+        // console.log(JSON.stringify(allLights, null, 2));
+        let list = [];
+        allLights.forEach(light => {
+          let l = {
+            name: light.data.name,
+            id: light.data.id,
+            state: light.data.state.on
+          }
+          list.push(l);
+          // console.log(l);
+        })
+        return res.status(200).json({
+          success: "success",
+          // allLights,
+          list
+        })
+  })
+});
+}
+
+const lightOn = async (req, res) => {
+  console.log(req.body);
+  const {id} = req.body;
+  if(!id) {
+    return res.status(200).json({
+      err: "no id"
+    })
+  }
+  // await hueApi.createLocal(ipAddress).connect(createdUser.username).
+  // then(api => {
+  //   const On = new LightState().on();
+  //   api.lights.setLightState(id, On);
+  // })
+  return res.status(200).json({
+    success: "light turned on",
+  })
+}
+
+const lightOff = async (req, res) => {
+  console.log(req.body);
+  const {id} = req.body;
+  if(!id) {
+    return res.status(200).json({
+      err: "no id"
+    })
+  }
+  // await hueApi.createLocal(ipAddress).connect(createdUser.username).
+  // then(api => {
+  //   const Off = new LightState().off();
+  //   api.lights.setLightState(id, Off);
+  // })
+  return res.status(200).json({
+    success: "light turned off",
+  })
+}
+
+const lightconfig = async (req, res) => {
+  const {id, bri, ct} = req.body;
+  console.log(id,bri,ct);
+  if(!id || !bri || !ct) {
+    return res.status(200).json({
+      error: "insufficient configuration details"
+    })
+  }
+//   else 
+//   await hueApi.createLocal(ipAddress).connect(createdUser.username).
+//   then(api => {
+//     const state = new LightState().brightness(bri).ct(ct);
+//     api.lights.setLightState(id, state);
+//   })
+  return res.status(200).json({
+    success: "light adjusted",
+  })
+}
+
 module.exports = {
-    discoverAndCreateUser
+    discoverAndCreateUser,
+    lightList,
+    lightOn,
+    lightOff,
+    lightconfig
 }

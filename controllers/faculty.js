@@ -52,6 +52,7 @@ const userRegister = async (req, res) => {
 
 const userLogin = async (req, res) => {
     const {phoneNumber, password} = req.body;
+    console.log("hi");
     if(!phoneNumber || !password){
         return res.status(422).json({
             error: "Incorrect Credentials!"
@@ -114,12 +115,14 @@ const createLab = async(req,res) => {
 }
 
 const acceptStudentJoinRequest = async (req, res) => {
-    const {studentId} = req.body;    
+    const {studentId} = req.body;   
+    console.log(studentId); 
     if(req.user.labId.length == 0){
         return res.status(200).json({
             success: "You do not have any lab :)"
         })
     }
+    else {
     let lab = labs.filter(lab => lab.id == req.user.labId);
     console.log(lab);
     lab[0].studentList.push(studentId);
@@ -148,6 +151,7 @@ const acceptStudentJoinRequest = async (req, res) => {
     return res.status(200).json({
         success: "student added successfully :)"
     })
+}
 }
 
 const rejectStudentJoinRequest = async (req, res) => {
