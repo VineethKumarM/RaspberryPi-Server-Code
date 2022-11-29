@@ -25,9 +25,9 @@ const userRegister = async (req, res) => {
         var bytes  = CryptoJS.AES.decrypt(cipher.ciphertext, 'secret key 123');
         var decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         // console.log(decryptedData);
-        if(decryptedData.phoneNumber == phoneNumber){
+        if(decryptedData.rollNumber == rollNumber){
             return res.status(422).json({
-                error: "phone Number is already taken by someother user :("
+                error: "roll Number is already taken by someother user :("
             })
         }
     })
@@ -79,13 +79,13 @@ const userLogin = async (req, res) => {
             error: "Incorrect Credentials :("
         })
     }
-    let passCheck = await bycrpt.compare(password, user[0].password);
+    let passCheck = await bycrpt.compare(password, user.password);
     if(passCheck){
-        const token = jwt.sign({id:user[0].id},keys.JWT_KEY, {expiresIn: "3600000"});//expires in 1 hour = 3600000 ms
+        const token = jwt.sign({id:user.id},keys.JWT_KEY, {expiresIn: "3600000"});//expires in 1 hour = 3600000 ms
         res.json({
             success: "Successfully LoggedIn",
             token,
-            user: user[0]
+            user: user
         });
     }else{
         return res.status(422).json({
